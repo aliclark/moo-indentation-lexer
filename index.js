@@ -16,10 +16,10 @@ class LexerIterator {
 
 class IndentationLexer {
     constructor({
-                    peekableLexer, indentationType, newlineType, indentationName, deindentationName,
+                    mooLexer, indentationType, newlineType, indentationName, deindentationName,
                     state, indentations, queuedTokens, queuedLines, lastToken
     }) {
-        this._peekableLexer = peekableLexer
+        this._mooLexer = mooLexer.peek ? mooLexer : this._makeMooLexer(mooLexer)
         this._indentationType = indentationType
         this._newlineType = newlineType
         this._indentationName = indentationName || 'indentation'
@@ -31,13 +31,18 @@ class IndentationLexer {
         this._lastToken = lastToken || null
     }
 
+    _makeMooLexer(mooLexer) {
+        const MooLexer = require('moo-peekable-lexer');
+        return new MooLexer({ mooLexer });
+    }
+
     reset(data, info) {
         this._state = info ? info.state : 'lineStart'
         this._indentations = info ? [...info.indentations] : ['']
         this._queuedTokens = info ? [...info.queuedTokens] : []
         this._queuedLines = info ? [...info.queuedLines] : []
         this._lastToken = info ? [...info.lastToken] : null
-        return this._peekableLexer.reset(data, info && info.peekableLexerInfo)
+        return this._mooLexer.reset(data, info && info.mooLexerInfo)
     }
 
     save() {
@@ -47,24 +52,24 @@ class IndentationLexer {
             queuedTokens: [...this._queuedTokens],
             queuedLines: [...this._queuedLines],
             lastToken: this._lastToken,
-            peekableLexerInfo: this._peekableLexer.save()
+            mooLexerInfo: this._mooLexer.save()
         }
     }
 
     setState(state) {
-        return this._peekableLexer.setState(state)
+        return this._mooLexer.setState(state)
     }
 
     popState() {
-        return this._peekableLexer.popState()
+        return this._mooLexer.popState()
     }
 
     pushState(state) {
-        return this._peekableLexer.pushState(state)
+        return this._mooLexer.pushState(state)
     }
 
     _getToken() {
-        const token = this._peekableLexer.next()
+        const token = this._mooLexer.next()
         if (!token) {
             return token
         }
@@ -73,7 +78,7 @@ class IndentationLexer {
     }
 
     next() {
-        const nextToken = this._peekableLexer.peek()
+        const nextToken = this._mooLexer.peek()
 
         if (this._state === 'lineStart') {
             if (nextToken && nextToken.type === this._indentationType) {
@@ -166,11 +171,11 @@ class IndentationLexer {
     }
 
     formatError(token, message) {
-        return this._peekableLexer.formatError(token, message)
+        return this._mooLexer.formatError(token, message)
     }
 
     clone() {
-        const peekableLexer = this._peekableLexer.clone()
+        const mooLexer = this._mooLexer.clone()
         const indentationType = this._indentationType
         const newlineType = this._newlineType
         const indentationName = this._indentationName
@@ -181,13 +186,13 @@ class IndentationLexer {
         const queuedLines = [...this._queuedLines]
         const lastToken = this._lastToken
         return new IndentationLexer({
-            peekableLexer, indentationType, newlineType, indentationName, deindentationName,
+            mooLexer, indentationType, newlineType, indentationName, deindentationName,
             state, indentations, queuedTokens, queuedLines, lastToken
         })
     }
 
     has(tokenType) {
-        return this._peekableLexer.has(tokenType)
+        return this._mooLexer.has(tokenType)
     }
 }
 

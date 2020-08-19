@@ -8,9 +8,11 @@
   "scripts": {
     "test": "jest"
   },
+  "dependencies": {
+    "moo-peekable-lexer": "file:../moo-peekable-lexer"
+  },
   "devDependencies": {
     "jest": "^26.4.0",
-    "moo": "^0.5.1",
-    "moo-peekable-lexer": "file:../moo-peekable-lexer"
+    "moo": "^0.5.1"
   }
 }

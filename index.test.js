@@ -1,5 +1,4 @@
 const moo = require('moo');
-const PeekableLexer = require('moo-peekable-lexer');
 const IndentationLexer = require('./');
 
 describe('IndentationLexer', () => {
@@ -15,9 +14,8 @@ describe('IndentationLexer', () => {
             keyword: ['while', 'if', 'else', 'moo', 'cows'],
             NL:      { match: /\n/, lineBreaks: true },
         })
-        const peekableLexer = new PeekableLexer({ mooLexer });
         const indentationLexer = new IndentationLexer({
-            peekableLexer, indentationType: 'WS', newlineType: 'NL', indentationName: 'indentation', deindentationName: 'deindentation'
+            mooLexer, indentationType: 'WS', newlineType: 'NL', indentationName: 'indentation', deindentationName: 'deindentation'
         });
 
         indentationLexer.reset('while (10) cows\nmoo')
@@ -46,9 +44,8 @@ describe('IndentationLexer', () => {
             keyword: ['while', 'if', 'else', 'moo', 'cows', 'go'],
             NL:      { match: /\n/, lineBreaks: true },
         })
-        const peekableLexer = new PeekableLexer({ mooLexer });
         const indentationLexer = new IndentationLexer({
-            peekableLexer, indentationType: 'WS', newlineType: 'NL', indentationName: 'indentation', deindentationName: 'deindentation'
+            mooLexer, indentationType: 'WS', newlineType: 'NL', indentationName: 'indentation', deindentationName: 'deindentation'
         });
 
         indentationLexer.reset('while (10)\n\tcows\n\t\t\tgo\n  moo')

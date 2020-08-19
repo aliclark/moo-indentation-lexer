@@ -2,7 +2,6 @@
 ## Usage
 ```js
 const moo = require('moo');
-const PeekableLexer = require('moo-peekable-lexer');
 const IndentationLexer = require('moo-indentation-lexer');
 
 // Create a lexer from rules
@@ -11,11 +10,9 @@ const mooLexer = moo.compile({
     ...,
     NL: { match: /\n/, lineBreaks: true }
 });
-// Create a peekable lexer using the Moo lexer
-const peekableLexer = new PeekableLexer({ mooLexer });
-// Create an indentation-aware lexer using the peekable lexer
+// Create an indentation-aware lexer using the lexer
 const indentationLexer = new IndentationLexer({
-    peekableLexer,
+    mooLexer,
     indentationType: 'WS',
     newlineType: 'NL',
     indentationName: 'indentation',
