@@ -48,7 +48,7 @@ describe('IndentationLexer', () => {
             lexer: mooLexer, indentationType: 'WS', newlineType: 'NL', indentationName: 'indentation', deindentationName: 'deindentation'
         });
 
-        lexer.reset('while (10)\n\tcows\n\t\t\tgo\n  moo')
+        lexer.reset('while (10)\n\tcows\n\n\t\t\t\t\n\t\t\tgo\n  moo')
 
         expect(lexer.next().text).toBe('while');
         expect(lexer.next().text).toBe(' ');
@@ -60,6 +60,9 @@ describe('IndentationLexer', () => {
         expect(lexer.next().text).toBe('\t');
         expect(lexer.next().text).toBe('cows');
         expect(lexer.next().text).toBe('\n');
+        expect(lexer.next().text).toBe('\n');
+        expect(lexer.next().text).toBe('\t\t\t\t');
+        expect(lexer.next().text).toBe('\n');
         expect(lexer.next().type).toBe('indentation');
         expect(lexer.next().text).toBe('\t\t\t');
         expect(lexer.next().text).toBe('go');
@@ -69,7 +72,7 @@ describe('IndentationLexer', () => {
         expect(lexer.next().type).toBe('indentation');
         expect(lexer.next().text).toBe('  ');
         expect(lexer.next().text).toBe('moo');
-        expect(lexer.next()).toMatchObject({ col: 6, line: 4, offset: 28, text: '  ', value: '', type: 'deindentation' });
+        expect(lexer.next()).toMatchObject({ col: 6, line: 6, offset: 34, text: '  ', value: '', type: 'deindentation' });
         expect(lexer.next()).toBe(undefined);
         expect(lexer.next()).toBe(undefined);
     });
