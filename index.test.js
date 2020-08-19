@@ -1,11 +1,11 @@
 const moo = require('moo');
-const PeekLexer = require('moo-peek-lexer');
+const PeekableLexer = require('moo-peekable-lexer');
 const IndentationLexer = require('./');
 
 describe('IndentationLexer', () => {
 
-    it('runs on example input', () => {
-        const lexer = moo.compile({
+    it('runs on Moo example input', () => {
+        const mooLexer = moo.compile({
             WS:      /[ \t]+/,
             comment: /\/\/.*?$/,
             number:  /0|[1-9][0-9]*/,
@@ -15,9 +15,9 @@ describe('IndentationLexer', () => {
             keyword: ['while', 'if', 'else', 'moo', 'cows'],
             NL:      { match: /\n/, lineBreaks: true },
         })
-        const peekLexer = new PeekLexer({ lexer });
+        const peekableLexer = new PeekableLexer({ mooLexer });
         const indentationLexer = new IndentationLexer({
-            peekLexer, indentationType: 'WS', newlineType: 'NL', indentationName: 'indentation', deindentationName: 'deindentation'
+            peekableLexer, indentationType: 'WS', newlineType: 'NL', indentationName: 'indentation', deindentationName: 'deindentation'
         });
 
         indentationLexer.reset('while (10) cows\nmoo')
@@ -35,8 +35,8 @@ describe('IndentationLexer', () => {
         expect(indentationLexer.next()).toBe(undefined);
     });
 
-    it('can indent', () => {
-        const lexer = moo.compile({
+    it('adds matching indentation and deindentation tokens', () => {
+        const mooLexer = moo.compile({
             WS:      /[ \t]+/,
             comment: /\/\/.*?$/,
             number:  /0|[1-9][0-9]*/,
@@ -46,9 +46,9 @@ describe('IndentationLexer', () => {
             keyword: ['while', 'if', 'else', 'moo', 'cows', 'go'],
             NL:      { match: /\n/, lineBreaks: true },
         })
-        const peekLexer = new PeekLexer({ lexer });
+        const peekableLexer = new PeekableLexer({ mooLexer });
         const indentationLexer = new IndentationLexer({
-            peekLexer, indentationType: 'WS', newlineType: 'NL', indentationName: 'indentation', deindentationName: 'deindentation'
+            peekableLexer, indentationType: 'WS', newlineType: 'NL', indentationName: 'indentation', deindentationName: 'deindentation'
         });
 
         indentationLexer.reset('while (10)\n\tcows\n\t\t\tgo\n  moo')

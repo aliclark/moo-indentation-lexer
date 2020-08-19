@@ -16,10 +16,10 @@ class LexerIterator {
 
 class IndentationLexer {
     constructor({
-                    peekLexer, indentationType, newlineType, indentationName, deindentationName,
+                    peekableLexer, indentationType, newlineType, indentationName, deindentationName,
                     state, indentations, queuedTokens, queuedLines, lastToken
     }) {
-        this._peekLexer = peekLexer
+        this._peekableLexer = peekableLexer
         this._indentationType = indentationType
         this._newlineType = newlineType
         this._indentationName = indentationName || 'indentation'
@@ -37,7 +37,7 @@ class IndentationLexer {
         this._queuedTokens = info ? [...info.queuedTokens] : []
         this._queuedLines = info ? [...info.queuedLines] : []
         this._lastToken = info ? [...info.lastToken] : null
-        return this._peekLexer.reset(data, info && info.peekLexerInfo)
+        return this._peekableLexer.reset(data, info && info.peekableLexerInfo)
     }
 
     save() {
@@ -47,24 +47,24 @@ class IndentationLexer {
             queuedTokens: [...this._queuedTokens],
             queuedLines: [...this._queuedLines],
             lastToken: this._lastToken,
-            peekLexerInfo: this._peekLexer.save()
+            peekableLexerInfo: this._peekableLexer.save()
         }
     }
 
     setState(state) {
-        return this._peekLexer.setState(state)
+        return this._peekableLexer.setState(state)
     }
 
     popState() {
-        return this._peekLexer.popState()
+        return this._peekableLexer.popState()
     }
 
     pushState(state) {
-        return this._peekLexer.pushState(state)
+        return this._peekableLexer.pushState(state)
     }
 
     _getToken() {
-        const token = this._peekLexer.next()
+        const token = this._peekableLexer.next()
         if (!token) {
             return token
         }
@@ -73,7 +73,7 @@ class IndentationLexer {
     }
 
     next() {
-        const nextToken = this._peekLexer.peek()
+        const nextToken = this._peekableLexer.peek()
 
         if (this._state === 'lineStart') {
             if (nextToken && nextToken.type === this._indentationType) {
@@ -166,11 +166,11 @@ class IndentationLexer {
     }
 
     formatError(token, message) {
-        return this._peekLexer.formatError(token, message)
+        return this._peekableLexer.formatError(token, message)
     }
 
     clone() {
-        const peekLexer = this._peekLexer.clone()
+        const peekableLexer = this._peekableLexer.clone()
         const indentationType = this._indentationType
         const newlineType = this._newlineType
         const indentationName = this._indentationName
@@ -181,13 +181,13 @@ class IndentationLexer {
         const queuedLines = [...this._queuedLines]
         const lastToken = this._lastToken
         return new IndentationLexer({
-            peekLexer, indentationType, newlineType, indentationName, deindentationName,
+            peekableLexer, indentationType, newlineType, indentationName, deindentationName,
             state, indentations, queuedTokens, queuedLines, lastToken
         })
     }
 
     has(tokenType) {
-        return this._peekLexer.has(tokenType)
+        return this._peekableLexer.has(tokenType)
     }
 }
 

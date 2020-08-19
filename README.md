@@ -2,20 +2,20 @@
 ## Usage
 ```js
 const moo = require('moo');
-const PeekLexer = require('moo-peek-lexer');
+const PeekableLexer = require('moo-peekable-lexer');
 const IndentationLexer = require('moo-indentation-lexer');
 
 // Create a lexer from rules
-const lexer = moo.compile({
+const mooLexer = moo.compile({
     WS: /[ \t]+/,
     ...,
     NL: { match: /\n/, lineBreaks: true }
 });
-// Create a peek-able lexer using the Moo lexer
-const peekLexer = new PeekLexer({ lexer });
-// Create an indentation-aware lexer using the peek-able lexer
+// Create a peekable lexer using the Moo lexer
+const peekableLexer = new PeekableLexer({ mooLexer });
+// Create an indentation-aware lexer using the peekable lexer
 const indentationLexer = new IndentationLexer({
-    peekLexer,
+    peekableLexer,
     indentationType: 'WS',
     newlineType: 'NL',
     indentationName: 'indentation',

@@ -2421,7 +2421,7 @@ mixin-deep@^1.2.0:
     for-in "^1.0.2"
     is-extendable "^1.0.1"
 
-"moo-peek-lexer@file:../moo-peek-lexer":
+"moo-peekable-lexer@file:../moo-peekable-lexer":
   version "1.0.0"
 
 moo@^0.5.1:
