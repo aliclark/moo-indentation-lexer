@@ -1,4 +1,4 @@
-# moo-indent-lexer
+# moo-indentation-lexer
 ## Usage
 ```js
 const moo = require('moo');
