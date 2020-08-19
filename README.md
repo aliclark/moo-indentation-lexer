@@ -11,8 +11,8 @@ const mooLexer = moo.compile({
     NL: { match: /\n/, lineBreaks: true }
 });
 // Create an indentation-aware lexer using the lexer
-const indentationLexer = new IndentationLexer({
-    mooLexer,
+const lexer = new IndentationLexer({
+    lexer: mooLexer,
     indentationType: 'WS',
     newlineType: 'NL',
     indentationName: 'indentation',
@@ -20,9 +20,9 @@ const indentationLexer = new IndentationLexer({
 });
 
 // Specify the data
-indentationLexer.reset('...')
+lexer.reset('...')
 
 // In addition to the normal Moo tokens,
 // extra tokens will be emitted for matching indentation/deindentation
-indentationLexer.next()
+lexer.next()
 ```

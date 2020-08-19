@@ -14,23 +14,23 @@ describe('IndentationLexer', () => {
             keyword: ['while', 'if', 'else', 'moo', 'cows'],
             NL:      { match: /\n/, lineBreaks: true },
         })
-        const indentationLexer = new IndentationLexer({
-            mooLexer, indentationType: 'WS', newlineType: 'NL', indentationName: 'indentation', deindentationName: 'deindentation'
+        const lexer = new IndentationLexer({
+            lexer: mooLexer, indentationType: 'WS', newlineType: 'NL', indentationName: 'indentation', deindentationName: 'deindentation'
         });
 
-        indentationLexer.reset('while (10) cows\nmoo')
+        lexer.reset('while (10) cows\nmoo')
 
-        expect(indentationLexer.next().text).toBe('while');
-        expect(indentationLexer.next().text).toBe(' ');
-        expect(indentationLexer.next().text).toBe('(');
-        expect(indentationLexer.next().text).toBe('10');
-        expect(indentationLexer.next().text).toBe(')');
-        expect(indentationLexer.next().text).toBe(' ');
-        expect(indentationLexer.next().text).toBe('cows');
-        expect(indentationLexer.next().text).toBe('\n');
-        expect(indentationLexer.next().text).toBe('moo');
-        expect(indentationLexer.next()).toBe(undefined);
-        expect(indentationLexer.next()).toBe(undefined);
+        expect(lexer.next().text).toBe('while');
+        expect(lexer.next().text).toBe(' ');
+        expect(lexer.next().text).toBe('(');
+        expect(lexer.next().text).toBe('10');
+        expect(lexer.next().text).toBe(')');
+        expect(lexer.next().text).toBe(' ');
+        expect(lexer.next().text).toBe('cows');
+        expect(lexer.next().text).toBe('\n');
+        expect(lexer.next().text).toBe('moo');
+        expect(lexer.next()).toBe(undefined);
+        expect(lexer.next()).toBe(undefined);
     });
 
     it('adds matching indentation and deindentation tokens', () => {
@@ -44,33 +44,33 @@ describe('IndentationLexer', () => {
             keyword: ['while', 'if', 'else', 'moo', 'cows', 'go'],
             NL:      { match: /\n/, lineBreaks: true },
         })
-        const indentationLexer = new IndentationLexer({
-            mooLexer, indentationType: 'WS', newlineType: 'NL', indentationName: 'indentation', deindentationName: 'deindentation'
+        const lexer = new IndentationLexer({
+            lexer: mooLexer, indentationType: 'WS', newlineType: 'NL', indentationName: 'indentation', deindentationName: 'deindentation'
         });
 
-        indentationLexer.reset('while (10)\n\tcows\n\t\t\tgo\n  moo')
+        lexer.reset('while (10)\n\tcows\n\t\t\tgo\n  moo')
 
-        expect(indentationLexer.next().text).toBe('while');
-        expect(indentationLexer.next().text).toBe(' ');
-        expect(indentationLexer.next().text).toBe('(');
-        expect(indentationLexer.next().text).toBe('10');
-        expect(indentationLexer.next().text).toBe(')');
-        expect(indentationLexer.next().text).toBe('\n');
-        expect(indentationLexer.next().type).toBe('indentation');
-        expect(indentationLexer.next().text).toBe('\t');
-        expect(indentationLexer.next().text).toBe('cows');
-        expect(indentationLexer.next().text).toBe('\n');
-        expect(indentationLexer.next().type).toBe('indentation');
-        expect(indentationLexer.next().text).toBe('\t\t\t');
-        expect(indentationLexer.next().text).toBe('go');
-        expect(indentationLexer.next().text).toBe('\n');
-        expect(indentationLexer.next().type).toBe('deindentation');
-        expect(indentationLexer.next().type).toBe('deindentation');
-        expect(indentationLexer.next().type).toBe('indentation');
-        expect(indentationLexer.next().text).toBe('  ');
-        expect(indentationLexer.next().text).toBe('moo');
-        expect(indentationLexer.next()).toMatchObject({ col: 6, line: 4, offset: 28, text: '  ', value: '', type: 'deindentation' });
-        expect(indentationLexer.next()).toBe(undefined);
-        expect(indentationLexer.next()).toBe(undefined);
+        expect(lexer.next().text).toBe('while');
+        expect(lexer.next().text).toBe(' ');
+        expect(lexer.next().text).toBe('(');
+        expect(lexer.next().text).toBe('10');
+        expect(lexer.next().text).toBe(')');
+        expect(lexer.next().text).toBe('\n');
+        expect(lexer.next().type).toBe('indentation');
+        expect(lexer.next().text).toBe('\t');
+        expect(lexer.next().text).toBe('cows');
+        expect(lexer.next().text).toBe('\n');
+        expect(lexer.next().type).toBe('indentation');
+        expect(lexer.next().text).toBe('\t\t\t');
+        expect(lexer.next().text).toBe('go');
+        expect(lexer.next().text).toBe('\n');
+        expect(lexer.next().type).toBe('deindentation');
+        expect(lexer.next().type).toBe('deindentation');
+        expect(lexer.next().type).toBe('indentation');
+        expect(lexer.next().text).toBe('  ');
+        expect(lexer.next().text).toBe('moo');
+        expect(lexer.next()).toMatchObject({ col: 6, line: 4, offset: 28, text: '  ', value: '', type: 'deindentation' });
+        expect(lexer.next()).toBe(undefined);
+        expect(lexer.next()).toBe(undefined);
     });
 })
