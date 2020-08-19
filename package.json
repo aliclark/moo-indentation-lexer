@@ -1,0 +1,13 @@
+{
+  "name": "moo-indent-lexer",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:aliclark/moo-indent-lexer.git",
+  "author": "Ali Clark",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^26.4.0",
+    "moo": "^0.5.1",
+    "moo-peek-lexer": "file:../moo-peek-lexer"
+  }
+}
