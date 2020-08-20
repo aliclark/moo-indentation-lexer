@@ -16,12 +16,13 @@ class LexerIterator {
 
 class IndentationLexer {
     constructor({
-                    lexer, indentationType, newlineType, indentName, dedentName,
+                    lexer, indentationType, newlineType, commentType, indentName, dedentName,
                     state, indentations, queuedTokens, queuedLines, lastToken
     }) {
         this._lexer = lexer.peek ? lexer : this._makeLexer(lexer)
         this._indentationType = indentationType
         this._newlineType = newlineType
+        this._commentType = commentType || null
         this._indentName = indentName || 'indent'
         this._dedentName = dedentName || 'dedent'
         this._state = state || 'lineStart'
@@ -85,19 +86,25 @@ class IndentationLexer {
                 this._queuedTokens.push(this._getToken())
                 return this.next()
             }
-            this._state = 'lineReading'
+            if (nextToken &&
+                (nextToken.type === this._newlineType || nextToken.type === this._commentType)) {
+                this._state = 'lineEnding'
+                return this.next()
+            }
+            this._state = 'lineContent'
+            this._queuedLines.push(this._queuedTokens)
+            this._queuedTokens = []
             return this.next()
         }
 
-        if (this._state === 'lineReading') {
-            if (nextToken && nextToken.type === this._newlineType) {
-                this._queuedTokens.push(this._getToken())
+        if (this._state === 'lineEnding') {
+            this._queuedTokens.push(this._getToken())
+
+            if (nextToken.type === this._newlineType) {
                 this._state = 'lineStart'
-            } else {
-                this._state = 'lineContent'
+                this._queuedLines.push(this._queuedTokens)
+                this._queuedTokens = []
             }
-            this._queuedLines.push(this._queuedTokens)
-            this._queuedTokens = []
             return this.next()
         }
 
@@ -178,6 +185,7 @@ class IndentationLexer {
         const lexer = this._lexer.clone()
         const indentationType = this._indentationType
         const newlineType = this._newlineType
+        const commentType = this._commentType
         const indentName = this._indentName
         const dedentName = this._dedentName
         const state = this._state
@@ -186,7 +194,7 @@ class IndentationLexer {
         const queuedLines = [...this._queuedLines]
         const lastToken = this._lastToken
         return new IndentationLexer({
-            lexer, indentationType, newlineType, indentName, dedentName,
+            lexer, indentationType, newlineType, commentType, indentName, dedentName,
             state, indentations, queuedTokens, queuedLines, lastToken
         })
     }

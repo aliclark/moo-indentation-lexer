@@ -7,6 +7,7 @@ const IndentationLexer = require('moo-indentation-lexer');
 // Create a lexer from rules
 const mooLexer = moo.compile({
     WS: /[ \t]+/,
+    comment: /\/\/.*?$/,
     ...,
     NL: { match: /\n/, lineBreaks: true }
 });
@@ -15,6 +16,7 @@ const lexer = new IndentationLexer({
     lexer: mooLexer,
     indentationType: 'WS',
     newlineType: 'NL',
+    commentType: 'comment',
     indentName: 'INDENT',
     dedentName: 'DEDENT'
 });

@@ -15,7 +15,7 @@ describe('IndentationLexer', () => {
             NL:      { match: /\n/, lineBreaks: true },
         })
         const lexer = new IndentationLexer({
-            lexer: mooLexer, indentationType: 'WS', newlineType: 'NL', indentName: 'INDENT', dedentName: 'DEDENT'
+            lexer: mooLexer, indentationType: 'WS', newlineType: 'NL', commentType: 'comment', indentName: 'INDENT', dedentName: 'DEDENT'
         });
 
         lexer.reset('while (10) cows\nmoo')
@@ -45,11 +45,12 @@ describe('IndentationLexer', () => {
             NL:      { match: /\n/, lineBreaks: true },
         })
         const lexer = new IndentationLexer({
-            lexer: mooLexer, indentationType: 'WS', newlineType: 'NL', indentName: 'INDENT', dedentName: 'DEDENT'
+            lexer: mooLexer, indentationType: 'WS', newlineType: 'NL', commentType: 'comment', indentName: 'INDENT', dedentName: 'DEDENT'
         });
 
-        lexer.reset('while (10)\n\tcows\n\n\t\t\t\t\n\t\t\tgo\n  moo')
+        lexer.reset('\nwhile (10)\n\tcows\n\n // comment\n\t\t\t\t\n\t\t\tgo\n  moo')
 
+        expect(lexer.next().text).toBe('\n');
         expect(lexer.next().text).toBe('while');
         expect(lexer.next().text).toBe(' ');
         expect(lexer.next().text).toBe('(');
@@ -60,6 +61,9 @@ describe('IndentationLexer', () => {
         expect(lexer.next().text).toBe('\t');
         expect(lexer.next().text).toBe('cows');
         expect(lexer.next().text).toBe('\n');
+        expect(lexer.next().text).toBe('\n');
+        expect(lexer.next().text).toBe(' ');
+        expect(lexer.next().text).toBe('// comment');
         expect(lexer.next().text).toBe('\n');
         expect(lexer.next().text).toBe('\t\t\t\t');
         expect(lexer.next().text).toBe('\n');
@@ -72,7 +76,7 @@ describe('IndentationLexer', () => {
         expect(lexer.next()).toMatchObject({ type: 'INDENT', text: '  ', value: '  ' });
         expect(lexer.next().text).toBe('  ');
         expect(lexer.next().text).toBe('moo');
-        expect(lexer.next()).toMatchObject({ type: 'DEDENT', col: 6, line: 6, offset: 34, text: '  ', value: '  ' });
+        expect(lexer.next()).toMatchObject({ type: 'DEDENT', col: 6, line: 8, offset: 47, text: '  ', value: '  ' });
         expect(lexer.next()).toBe(undefined);
         expect(lexer.next()).toBe(undefined);
     });
