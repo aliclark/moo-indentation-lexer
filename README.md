@@ -23,6 +23,6 @@ const lexer = new IndentationLexer({
 lexer.reset('...')
 
 // In addition to the normal Moo tokens,
-// extra tokens will be emitted for matching indentation/deindentation
+// extra tokens will be emitted for matching indentation/unindentation
 lexer.next()
 ```
