@@ -23,8 +23,8 @@ class IndentationLexer {
         this._indentationType = indentationType
         this._newlineType = newlineType
         this._commentType = commentType || null
-        this._indentName = indentName || 'indent'
-        this._dedentName = dedentName || 'dedent'
+        this._indentName = indentName || 'INDENT'
+        this._dedentName = dedentName || 'DEDENT'
         this._state = state || 'lineStart'
         this._indentations = indentations || ['']
         this._queuedTokens = queuedTokens || []
