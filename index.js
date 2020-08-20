@@ -16,14 +16,14 @@ class LexerIterator {
 
 class IndentationLexer {
     constructor({
-                    lexer, indentationType, newlineType, indentationName, deindentationName,
+                    lexer, indentationType, newlineType, indentName, dedentName,
                     state, indentations, queuedTokens, queuedLines, lastToken
     }) {
         this._lexer = lexer.peek ? lexer : this._makeLexer(lexer)
         this._indentationType = indentationType
         this._newlineType = newlineType
-        this._indentationName = indentationName || 'indentation'
-        this._deindentationName = deindentationName || 'deindentation'
+        this._indentName = indentName || 'indent'
+        this._dedentName = dedentName || 'dedent'
         this._state = state || 'lineStart'
         this._indentations = indentations || ['']
         this._queuedTokens = queuedTokens || []
@@ -109,12 +109,12 @@ class IndentationLexer {
                 this._queuedTokens = this._queuedLines.shift()
 
                 if (this._queuedLines.length === 0) {
-                    this._state = 'reindenting'
+                    this._state = 'reIndentation'
                 }
                 return this.next()
             }
             if (!nextToken && this._indentations.length > 1) {
-                this._state = 'reindenting'
+                this._state = 'reIndentation'
                 return this.next()
             }
 
@@ -126,7 +126,7 @@ class IndentationLexer {
             return token
         }
 
-        if (this._state === 'reindenting') {
+        if (this._state === 'reIndentation') {
 
             const indentationLevel = this._indentations[this._indentations.length - 1]
             const indentation = this._queuedTokens.map(({ value }) => value).join('')
@@ -141,7 +141,7 @@ class IndentationLexer {
             if (nextToken && indentation.startsWith(indentationLevel)) {
                 this._indentations.push(indentation)
                 return {
-                    type: this._indentationName,
+                    type: this._indentName,
                     value: indentation,
                     text: indentationLevel,
                     toString: startToken.toString,
@@ -154,7 +154,7 @@ class IndentationLexer {
 
             this._indentations.pop()
             return {
-                type: this._deindentationName,
+                type: this._dedentName,
                 value: indentation,
                 text: indentationLevel,
                 toString: startToken ? startToken.toString : this._lastToken.toString,
@@ -179,14 +179,14 @@ class IndentationLexer {
         const indentationType = this._indentationType
         const newlineType = this._newlineType
         const indentationName = this._indentationName
-        const deindentationName = this._deindentationName
+        const dedentName = this._dedentName
         const state = this._state
         const indentations = [...this._indentations]
         const queuedTokens = [...this._queuedTokens]
         const queuedLines = [...this._queuedLines]
         const lastToken = this._lastToken
         return new IndentationLexer({
-            lexer, indentationType, newlineType, indentationName, deindentationName,
+            lexer, indentationType, newlineType, indentationName, dedentName,
             state, indentations, queuedTokens, queuedLines, lastToken
         })
     }

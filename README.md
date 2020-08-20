@@ -15,8 +15,8 @@ const lexer = new IndentationLexer({
     lexer: mooLexer,
     indentationType: 'WS',
     newlineType: 'NL',
-    indentationName: 'indentation',
-    deindentationName: 'deindentation'
+    indentName: 'INDENT',
+    dedentName: 'DEDENT'
 });
 
 // Specify the data
