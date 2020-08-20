@@ -80,4 +80,28 @@ describe('IndentationLexer', () => {
         expect(lexer.next()).toBe(undefined);
         expect(lexer.next()).toBe(undefined);
     });
+
+    it('can end on an indent', () => {
+        const mooLexer = moo.compile({
+            WS:      /[ \t]+/,
+            comment: /\/\/.*?$/,
+            number:  /0|[1-9][0-9]*/,
+            string:  /"(?:\\["\\]|[^\n"\\])*"/,
+            lparen:  '(',
+            rparen:  ')',
+            keyword: ['while', 'if', 'else', 'moo', 'cows', 'go'],
+            NL:      { match: /\n/, lineBreaks: true },
+        })
+        const lexer = new IndentationLexer({
+            lexer: mooLexer, indentationType: 'WS', newlineType: 'NL', commentType: 'comment', indentName: 'INDENT', dedentName: 'DEDENT'
+        });
+
+//        lexer.reset('\n\n\n\ncows\n\t\t')
+        lexer.reset('cows\n\t')
+
+        expect(lexer.next().text).toBe('cows');
+        expect(lexer.next().text).toBe('\n');
+        expect(lexer.next().text).toBe('\t');
+        expect(lexer.next()).toBe(undefined);
+    });
 })

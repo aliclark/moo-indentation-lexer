@@ -116,7 +116,7 @@ class IndentationLexer {
             if (this._queuedLines.length !== 0) {
                 this._queuedTokens = this._queuedLines.shift()
 
-                if (this._queuedLines.length === 0) {
+                if (nextToken && this._queuedLines.length === 0) {
                     this._state = 'reIndentation'
                 }
                 return this.next()
