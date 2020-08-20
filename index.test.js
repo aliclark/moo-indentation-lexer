@@ -97,11 +97,21 @@ describe('IndentationLexer', () => {
         });
 
 //        lexer.reset('\n\n\n\ncows\n\t\t')
-        lexer.reset('cows\n\t')
+        lexer.reset('cows\n\tcows\n\t\tcows\n\t')
 
         expect(lexer.next().text).toBe('cows');
         expect(lexer.next().text).toBe('\n');
+        expect(lexer.next()).toMatchObject({ type: 'INDENT', text: '\t', value: '\t' });
         expect(lexer.next().text).toBe('\t');
+        expect(lexer.next().text).toBe('cows');
+        expect(lexer.next().text).toBe('\n');
+        expect(lexer.next()).toMatchObject({ type: 'INDENT', text: '\t\t', value: '\t' });
+        expect(lexer.next().text).toBe('\t\t');
+        expect(lexer.next().text).toBe('cows');
+        expect(lexer.next().text).toBe('\n');
+        expect(lexer.next().text).toBe('\t');
+        expect(lexer.next()).toMatchObject({ type: 'DEDENT', text: '\t\t', value: '\t' });
+        expect(lexer.next()).toMatchObject({ type: 'DEDENT', text: '\t', value: '\t' });
         expect(lexer.next()).toBe(undefined);
     });
 })
