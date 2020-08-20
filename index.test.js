@@ -2,21 +2,27 @@ const moo = require('moo');
 const IndentationLexer = require('./');
 
 describe('IndentationLexer', () => {
+    let mooLexer
+    let lexer
 
-    it('runs on Moo example input', () => {
-        const mooLexer = moo.compile({
+    beforeEach(() => {
+        mooLexer = moo.compile({
             WS:      /[ \t]+/,
             comment: /\/\/.*?$/,
             number:  /0|[1-9][0-9]*/,
             string:  /"(?:\\["\\]|[^\n"\\])*"/,
             lparen:  '(',
             rparen:  ')',
-            keyword: ['while', 'if', 'else', 'moo', 'cows'],
+            keyword: ['while', 'if', 'else', 'moo', 'cows', 'go'],
             NL:      { match: /\n/, lineBreaks: true },
         })
-        const lexer = new IndentationLexer({
+
+        lexer = new IndentationLexer({
             lexer: mooLexer, indentationType: 'WS', newlineType: 'NL', commentType: 'comment', indentName: 'INDENT', dedentName: 'DEDENT'
-        });
+        })
+    })
+
+    it('runs on Moo example input', () => {
 
         lexer.reset('while (10) cows\nmoo')
 
@@ -34,19 +40,6 @@ describe('IndentationLexer', () => {
     });
 
     it('adds matching indent and dedent tokens', () => {
-        const mooLexer = moo.compile({
-            WS:      /[ \t]+/,
-            comment: /\/\/.*?$/,
-            number:  /0|[1-9][0-9]*/,
-            string:  /"(?:\\["\\]|[^\n"\\])*"/,
-            lparen:  '(',
-            rparen:  ')',
-            keyword: ['while', 'if', 'else', 'moo', 'cows', 'go'],
-            NL:      { match: /\n/, lineBreaks: true },
-        })
-        const lexer = new IndentationLexer({
-            lexer: mooLexer, indentationType: 'WS', newlineType: 'NL', commentType: 'comment', indentName: 'INDENT', dedentName: 'DEDENT'
-        });
 
         lexer.reset('\nwhile (10)\n\tcows\n\n // comment\n\t\t\t\t\n\t\t\tgo\n  moo')
 
@@ -82,19 +75,6 @@ describe('IndentationLexer', () => {
     });
 
     it('can end on an indent', () => {
-        const mooLexer = moo.compile({
-            WS:      /[ \t]+/,
-            comment: /\/\/.*?$/,
-            number:  /0|[1-9][0-9]*/,
-            string:  /"(?:\\["\\]|[^\n"\\])*"/,
-            lparen:  '(',
-            rparen:  ')',
-            keyword: ['while', 'if', 'else', 'moo', 'cows', 'go'],
-            NL:      { match: /\n/, lineBreaks: true },
-        })
-        const lexer = new IndentationLexer({
-            lexer: mooLexer, indentationType: 'WS', newlineType: 'NL', commentType: 'comment', indentName: 'INDENT', dedentName: 'DEDENT'
-        });
 
         lexer.reset('cows\n\tcows\n\t\tcows\n\t')
 
