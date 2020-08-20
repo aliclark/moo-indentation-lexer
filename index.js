@@ -142,8 +142,8 @@ class IndentationLexer {
                 this._indentations.push(indentation)
                 return {
                     type: this._indentName,
-                    value: indentation,
-                    text: indentationLevel,
+                    value: indentation.slice(indentationLevel.length),
+                    text: indentation,
                     toString: startToken.toString,
                     offset: startToken.offset,
                     lineBreaks: 0,
@@ -155,7 +155,7 @@ class IndentationLexer {
             this._indentations.pop()
             return {
                 type: this._dedentName,
-                value: indentation,
+                value: indentationLevel.slice(this._indentations[this._indentations.length - 1].length),
                 text: indentationLevel,
                 toString: startToken ? startToken.toString : this._lastToken.toString,
                 offset: startToken ? startToken.offset : this._lastToken.offset + this._lastToken.text.length,
