@@ -42,7 +42,7 @@ class IndentationLexer {
         this._indentations = info ? [...info.indentations] : ['']
         this._queuedTokens = info ? [...info.queuedTokens] : []
         this._queuedLines = info ? [...info.queuedLines] : []
-        this._lastToken = info ? [...info.lastToken] : null
+        this._lastToken = info ? info.lastToken : null
         return this._lexer.reset(data, info && info.lexerInfo)
     }
 
