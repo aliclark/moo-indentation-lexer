@@ -1,6 +1,6 @@
 {
   "name": "moo-indentation-lexer",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "main": "index.js",
   "repository": "git@github.com:aliclark/moo-indentation-lexer.git",
   "author": "Ali Clark",
