@@ -96,7 +96,6 @@ describe('IndentationLexer', () => {
             lexer: mooLexer, indentationType: 'WS', newlineType: 'NL', commentType: 'comment', indentName: 'INDENT', dedentName: 'DEDENT'
         });
 
-//        lexer.reset('\n\n\n\ncows\n\t\t')
         lexer.reset('cows\n\tcows\n\t\tcows\n\t')
 
         expect(lexer.next().text).toBe('cows');
