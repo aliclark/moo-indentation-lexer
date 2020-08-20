@@ -201,7 +201,9 @@ class IndentationLexer {
     }
 
     has(tokenType) {
-        return this._lexer.has(tokenType)
+        return tokenType === this._indentName
+            || tokenType === this._dedentName
+            || this._lexer.has(tokenType)
     }
 }
 
