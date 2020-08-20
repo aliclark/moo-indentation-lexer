@@ -178,7 +178,7 @@ class IndentationLexer {
         const lexer = this._lexer.clone()
         const indentationType = this._indentationType
         const newlineType = this._newlineType
-        const indentationName = this._indentationName
+        const indentName = this._indentName
         const dedentName = this._dedentName
         const state = this._state
         const indentations = [...this._indentations]
@@ -186,7 +186,7 @@ class IndentationLexer {
         const queuedLines = [...this._queuedLines]
         const lastToken = this._lastToken
         return new IndentationLexer({
-            lexer, indentationType, newlineType, indentationName, dedentName,
+            lexer, indentationType, newlineType, indentName, dedentName,
             state, indentations, queuedTokens, queuedLines, lastToken
         })
     }
