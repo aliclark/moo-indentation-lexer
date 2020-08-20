@@ -87,7 +87,8 @@ class IndentationLexer {
                 return this.next()
             }
             if (nextToken &&
-                (nextToken.type === this._newlineType || nextToken.type === this._commentType)) {
+                (nextToken.type === this._newlineType ||
+                    this._commentType !== null && nextToken.type === this._commentType)) {
                 this._state = 'lineEnding'
                 return this.next()
             }
