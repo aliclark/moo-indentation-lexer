@@ -2421,10 +2421,10 @@ mixin-deep@^1.2.0:
     for-in "^1.0.2"
     is-extendable "^1.0.1"
 
-moo-peekable-lexer@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/moo-peekable-lexer/-/moo-peekable-lexer-1.1.0.tgz#42b79f6b3497eb6a97bc72a3228e4bdbff489064"
-  integrity sha512-UM50itiVFpMrFXcm6pSMttbHRjxxK5Y8mc3oINeu/hf17FsDDcbdfgR3zgeeOIjP5/jL218Pr4iHi2DVvly+Ww==
+moo-peekable-lexer@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/moo-peekable-lexer/-/moo-peekable-lexer-1.1.1.tgz#f6afc7ae4311e17ef3b4354f12497fcaef413ae6"
+  integrity sha512-ttw2xQyggPMcAnb/K3Z+HNZWjQTHLZodUP3eLvRgIYlWvM2sswQ+ikYTMTpUWBfwJF+2oU7G2s0oNQOxeDQHGw==
 
 moo@^0.5.1:
   version "0.5.1"
