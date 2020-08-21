@@ -89,8 +89,8 @@ describe('IndentationLexer', () => {
         expect(lexer.next().text).toBe('cows');
         expect(lexer.next().text).toBe('\n');
         expect(lexer.next()).toMatchObject({ type: 'DEDENT', indentation: '\t' });
-        expect(lexer.next().text).toBe('\t');
         expect(lexer.next()).toMatchObject({ type: 'DEDENT', indentation: '' });
+        expect(lexer.next().text).toBe('\t');
         expect(lexer.next()).toBe(undefined);
     });
 

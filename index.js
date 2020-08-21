@@ -113,20 +113,9 @@ class IndentationLexer {
             const indentationLevel = this._indentations[this._indentations.length - 1]
             const indentation = (this._queuedLines[this._queuedLines.length - 1] || []).map(({ value }) => value).join('')
 
-            if (!nextToken) {
-                this._state = 'lineFlush';
-            }
-
-            if (indentation === indentationLevel) {
-                if (this._queuedLines.length === 1) {
-                    this._state = 'lineFlush'
-                    return this.next()
-                }
-                if (this._queuedLines[0].length === 0) {
-                    this._queuedLines.shift()
-                    return this.next()
-                }
-                return this._queuedLines[0].shift()
+            if (!nextToken || indentation === indentationLevel) {
+                this._state = 'bufferFlush'
+                return this.next()
             }
 
             if (indentation.startsWith(indentationLevel)) {
@@ -160,39 +149,47 @@ class IndentationLexer {
             }
         }
 
-        if (this._state === 'lineFlush') {
+        if (this._state === 'bufferFlush') {
 
-            if (this._queuedLines.length === 0) {
-
-                if (!nextToken && this._indentations.length > 1) {
-                    this._indentations.pop()
-                    return {
-                        type: this._dedentName,
-                        value: '',
-                        text: '',
-                        toString: this._lastToken.toString,
-                        offset: this._lastToken.offset + this._lastToken.text.length,
-                        lineBreaks: 0,
-                        line: this._lastToken.line,
-                        col: this._lastToken.col + this._lastToken.text.length,
-                        indentation: this._indentations[this._indentations.length - 1]
-                    }
+            if (!nextToken && this._indentations.length > 1) {
+                this._indentations.pop()
+                return {
+                    type: this._dedentName,
+                    value: '',
+                    text: '',
+                    toString: this._lastToken.toString,
+                    offset: this._lastToken.offset + this._lastToken.text.length,
+                    lineBreaks: 0,
+                    line: this._lastToken.line,
+                    col: this._lastToken.col + this._lastToken.text.length,
+                    indentation: this._indentations[this._indentations.length - 1]
                 }
-
-                const token = this._getToken()
-
-                if (token && token.type === this._newlineType) {
-                    this._state = 'lineStart'
-                }
-                return token
             }
 
+            if (this._queuedLines.length === 0) {
+                this._state = 'lineFlush'
+                return this.next()
+            }
             if (this._queuedLines[0].length === 0) {
                 this._queuedLines.shift()
                 return this.next()
             }
-
             return this._queuedLines[0].shift()
+        }
+
+        if (this._state === 'lineFlush') {
+
+            if (!nextToken && this._indentations.length > 1) {
+                this._state = 'bufferFlush'
+                return this.next()
+            }
+
+            const token = this._getToken()
+
+            if (token && token.type === this._newlineType) {
+                this._state = 'lineStart'
+            }
+            return token
         }
     }
 
