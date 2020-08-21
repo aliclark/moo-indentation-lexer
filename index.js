@@ -112,7 +112,22 @@ class IndentationLexer {
 
         if (this._state === 'lineContent') {
             const indentationLevel = this._indentations[this._indentations.length - 1]
-            const indentation = this._queuedLines[this._queuedLines.length - 1].map(({ value }) => value).join('')
+            const indentation = (this._queuedLines[this._queuedLines.length - 1] || []).map(({ value }) => value).join('')
+
+            if (!nextToken && this._indentations.length > 1) {
+                this._indentations.pop()
+                return {
+                    type: this._dedentName,
+                    value: '',
+                    text: '',
+                    toString: this._lastToken.toString,
+                    offset: this._lastToken.offset + this._lastToken.text.length,
+                    lineBreaks: 0,
+                    line: this._lastToken.line,
+                    col: this._lastToken.col + this._lastToken.text.length,
+                    indentation: this._indentations[this._indentations.length - 1]
+                }
+            }
 
             if (!nextToken || indentation === indentationLevel) {
                 this._state = 'bufferFlush'
@@ -152,21 +167,6 @@ class IndentationLexer {
 
         if (this._state === 'bufferFlush') {
 
-            if (!nextToken && this._indentations.length > 1) {
-                this._indentations.pop()
-                return {
-                    type: this._dedentName,
-                    value: '',
-                    text: '',
-                    toString: this._lastToken.toString,
-                    offset: this._lastToken.offset + this._lastToken.text.length,
-                    lineBreaks: 0,
-                    line: this._lastToken.line,
-                    col: this._lastToken.col + this._lastToken.text.length,
-                    indentation: this._indentations[this._indentations.length - 1]
-                }
-            }
-
             if (this._queuedLines.length === 0) {
                 this._state = 'lineFlush'
                 return this.next()
@@ -181,7 +181,7 @@ class IndentationLexer {
         if (this._state === 'lineFlush') {
 
             if (!nextToken && this._indentations.length > 1) {
-                this._state = 'bufferFlush'
+                this._state = 'lineContent'
                 return this.next()
             }
 
