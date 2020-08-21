@@ -1,8 +1,8 @@
 # moo-indentation-lexer
 ## Usage
 ```js
-const moo = require('moo');
-const IndentationLexer = require('moo-indentation-lexer');
+const moo = require('moo')
+const IndentationLexer = require('moo-indentation-lexer')
 
 // Create a lexer from rules
 const mooLexer = moo.compile({
@@ -19,7 +19,7 @@ const lexer = new IndentationLexer({
     commentType: 'comment',
     indentName: 'INDENT',
     dedentName: 'DEDENT'
-});
+})
 
 // Specify the data
 lexer.reset('...')

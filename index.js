@@ -33,8 +33,8 @@ class IndentationLexer {
     }
 
     _makeLexer(lexer) {
-        const PeekableLexer = require('moo-peekable-lexer');
-        return new PeekableLexer({ lexer });
+        const PeekableLexer = require('moo-peekable-lexer')
+        return new PeekableLexer({ lexer })
     }
 
     reset(data, info) {
@@ -227,4 +227,4 @@ class IndentationLexer {
     }
 }
 
-module.exports = IndentationLexer;
+module.exports = IndentationLexer
