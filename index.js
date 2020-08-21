@@ -14,14 +14,16 @@ class LexerIterator {
     }
 }
 
+const nonTab = /[^\t]/;
+
 class IndentationLexer {
     constructor({
                     lexer, indentationType, newlineType, commentType, indentName, dedentName,
                     state, indentations, queuedTokens, queuedLines, lastToken
     }) {
-        this._lexer = lexer.peek ? lexer : this._makeLexer(lexer)
-        this._indentationType = indentationType
-        this._newlineType = newlineType
+        this._lexer = lexer.peek ? lexer : this._makePeekableLexer(lexer)
+        this._indentationType = indentationType || null
+        this._newlineType = newlineType || null
         this._commentType = commentType || null
         this._indentName = indentName || 'INDENT'
         this._dedentName = dedentName || 'DEDENT'
@@ -32,7 +34,7 @@ class IndentationLexer {
         this._lastToken = lastToken || null
     }
 
-    _makeLexer(lexer) {
+    _makePeekableLexer(lexer) {
         const PeekableLexer = require('moo-peekable-lexer')
         return new PeekableLexer({ lexer })
     }
@@ -78,20 +80,35 @@ class IndentationLexer {
         return this._lastToken
     }
 
+    _isIndentation(token) {
+        return token &&
+            (this._indentationType === null
+                ? token.text && !nonTab.test(token.text)
+                : token.type === this._indentationType)
+    }
+
+    _isNewline(token) {
+        return token &&
+            (this._newlineType === null
+                ? token.text.endsWith('\n')
+                : token.type === this._newlineType)
+    }
+
+    _isComment(token) {
+        return this._commentType !== null && token && token.type === this._commentType
+    }
+
     next() {
         const nextToken = this._lexer.peek()
 
         if (this._state === 'lineStart') {
-            if (nextToken) {
-                if (nextToken.type === this._indentationType) {
-                    this._queuedTokens.push(this._getToken())
-                    return this.next()
-                }
-                if (nextToken.type === this._newlineType
-                    || this._commentType !== null && nextToken.type === this._commentType) {
-                    this._state = 'lineEnding'
-                    return this.next()
-                }
+            if (this._isIndentation(nextToken)) {
+                this._queuedTokens.push(this._getToken())
+                return this.next()
+            }
+            if (this._isNewline(nextToken) || this._isComment(nextToken)) {
+                this._state = 'lineEnding'
+                return this.next()
             }
             this._state = 'lineContent'
             this._queuedLines.push(this._queuedTokens)
@@ -102,7 +119,7 @@ class IndentationLexer {
         if (this._state === 'lineEnding') {
             this._queuedTokens.push(this._getToken())
 
-            if (nextToken.type === this._newlineType) {
+            if (this._isNewline(nextToken)) {
                 this._state = 'lineStart'
                 this._queuedLines.push(this._queuedTokens)
                 this._queuedTokens = []
@@ -187,7 +204,7 @@ class IndentationLexer {
 
             const token = this._getToken()
 
-            if (token && token.type === this._newlineType) {
+            if (this._isNewline(nextToken)) {
                 this._state = 'lineStart'
             }
             return token

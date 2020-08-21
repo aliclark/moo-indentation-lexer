@@ -17,9 +17,7 @@ describe('IndentationLexer', () => {
             NL:      { match: /\n/, lineBreaks: true },
         })
 
-        lexer = new IndentationLexer({
-            lexer: mooLexer, indentationType: 'WS', newlineType: 'NL', commentType: 'comment', indentName: 'INDENT', dedentName: 'DEDENT'
-        })
+        lexer = new IndentationLexer({ lexer: mooLexer })
     })
 
     it('runs on Moo example input', () => {
@@ -41,7 +39,7 @@ describe('IndentationLexer', () => {
 
     it('adds matching indent and dedent tokens', () => {
 
-        lexer.reset('\nwhile (10)\n\tcows\n\n // comment\n\t\t\t\t\n\t\t\tgo\n  moo')
+        lexer.reset('\nwhile (10)\n\tcows\n\n\t// comment\n\t\t\t\t\n\t\t\tgo\n  moo')
 
         expect(lexer.next().text).toBe('\n')
         expect(lexer.next().text).toBe('while')
@@ -56,7 +54,7 @@ describe('IndentationLexer', () => {
         expect(lexer.next().text).toBe('\n')
         expect(lexer.next()).toMatchObject({ type: 'INDENT', indentation: '\t\t\t' })
         expect(lexer.next().text).toBe('\n')
-        expect(lexer.next().text).toBe(' ')
+        expect(lexer.next().text).toBe('\t')
         expect(lexer.next().text).toBe('// comment')
         expect(lexer.next().text).toBe('\n')
         expect(lexer.next().text).toBe('\t\t\t\t')
