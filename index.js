@@ -82,15 +82,16 @@ class IndentationLexer {
         const nextToken = this._lexer.peek()
 
         if (this._state === 'lineStart') {
-            if (nextToken && nextToken.type === this._indentationType) {
-                this._queuedTokens.push(this._getToken())
-                return this.next()
-            }
-            if (nextToken &&
-                (nextToken.type === this._newlineType ||
-                    this._commentType !== null && nextToken.type === this._commentType)) {
-                this._state = 'lineEnding'
-                return this.next()
+            if (nextToken) {
+                if (nextToken.type === this._indentationType) {
+                    this._queuedTokens.push(this._getToken())
+                    return this.next()
+                }
+                if (nextToken.type === this._newlineType
+                    || this._commentType !== null && nextToken.type === this._commentType) {
+                    this._state = 'lineEnding'
+                    return this.next()
+                }
             }
             this._state = 'lineContent'
             this._queuedLines.push(this._queuedTokens)
@@ -111,7 +112,7 @@ class IndentationLexer {
 
         if (this._state === 'lineContent') {
             const indentationLevel = this._indentations[this._indentations.length - 1]
-            const indentation = (this._queuedLines[this._queuedLines.length - 1] || []).map(({ value }) => value).join('')
+            const indentation = this._queuedLines[this._queuedLines.length - 1].map(({ value }) => value).join('')
 
             if (!nextToken || indentation === indentationLevel) {
                 this._state = 'bufferFlush'
