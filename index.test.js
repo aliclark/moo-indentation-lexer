@@ -50,26 +50,26 @@ describe('IndentationLexer', () => {
         expect(lexer.next().text).toBe('10');
         expect(lexer.next().text).toBe(')');
         expect(lexer.next().text).toBe('\n');
-        expect(lexer.next()).toMatchObject({ type: 'INDENT', text: '\t', value: '\t' });
+        expect(lexer.next()).toMatchObject({ type: 'INDENT', indentation: '\t' });
         expect(lexer.next().text).toBe('\t');
         expect(lexer.next().text).toBe('cows');
         expect(lexer.next().text).toBe('\n');
+        expect(lexer.next()).toMatchObject({ type: 'INDENT', indentation: '\t\t\t' });
         expect(lexer.next().text).toBe('\n');
         expect(lexer.next().text).toBe(' ');
         expect(lexer.next().text).toBe('// comment');
         expect(lexer.next().text).toBe('\n');
         expect(lexer.next().text).toBe('\t\t\t\t');
         expect(lexer.next().text).toBe('\n');
-        expect(lexer.next()).toMatchObject({ type: 'INDENT', text: '\t\t\t', value: '\t\t' });
         expect(lexer.next().text).toBe('\t\t\t');
         expect(lexer.next().text).toBe('go');
         expect(lexer.next().text).toBe('\n');
-        expect(lexer.next()).toMatchObject({ type: 'DEDENT', text: '\t\t\t', value: '\t\t' });
-        expect(lexer.next()).toMatchObject({ type: 'DEDENT', text: '\t', value: '\t' });
-        expect(lexer.next()).toMatchObject({ type: 'INDENT', text: '  ', value: '  ' });
+        expect(lexer.next()).toMatchObject({ type: 'DEDENT', indentation: '\t' });
+        expect(lexer.next()).toMatchObject({ type: 'DEDENT', indentation: '' });
+        expect(lexer.next()).toMatchObject({ type: 'INDENT', indentation: '  ' });
         expect(lexer.next().text).toBe('  ');
         expect(lexer.next().text).toBe('moo');
-        expect(lexer.next()).toMatchObject({ type: 'DEDENT', col: 6, line: 8, offset: 47, text: '  ', value: '  ' });
+        expect(lexer.next()).toMatchObject({ type: 'DEDENT', col: 6, line: 8, offset: 47, indentation: '' });
         expect(lexer.next()).toBe(undefined);
         expect(lexer.next()).toBe(undefined);
     });
@@ -80,17 +80,42 @@ describe('IndentationLexer', () => {
 
         expect(lexer.next().text).toBe('cows');
         expect(lexer.next().text).toBe('\n');
-        expect(lexer.next()).toMatchObject({ type: 'INDENT', text: '\t', value: '\t' });
+        expect(lexer.next()).toMatchObject({ type: 'INDENT', indentation: '\t' });
         expect(lexer.next().text).toBe('\t');
         expect(lexer.next().text).toBe('cows');
         expect(lexer.next().text).toBe('\n');
-        expect(lexer.next()).toMatchObject({ type: 'INDENT', text: '\t\t', value: '\t' });
+        expect(lexer.next()).toMatchObject({ type: 'INDENT', indentation: '\t\t' });
         expect(lexer.next().text).toBe('\t\t');
         expect(lexer.next().text).toBe('cows');
         expect(lexer.next().text).toBe('\n');
+        expect(lexer.next()).toMatchObject({ type: 'DEDENT', indentation: '\t' });
         expect(lexer.next().text).toBe('\t');
-        expect(lexer.next()).toMatchObject({ type: 'DEDENT', text: '\t\t', value: '\t' });
-        expect(lexer.next()).toMatchObject({ type: 'DEDENT', text: '\t', value: '\t' });
+        expect(lexer.next()).toMatchObject({ type: 'DEDENT', indentation: '' });
+        expect(lexer.next()).toBe(undefined);
+    });
+
+    it('adds indent and dedent tokens early', () => {
+
+        lexer.reset('cows\n\n\n\t\t\n\tcows\n\t\t\n\t\n\ncows\n')
+
+        expect(lexer.next().text).toBe('cows');
+        expect(lexer.next().text).toBe('\n');
+        expect(lexer.next()).toMatchObject({ type: 'INDENT', indentation: '\t' });
+        expect(lexer.next().text).toBe('\n');
+        expect(lexer.next().text).toBe('\n');
+        expect(lexer.next().text).toBe('\t\t');
+        expect(lexer.next().text).toBe('\n');
+        expect(lexer.next().text).toBe('\t');
+        expect(lexer.next().text).toBe('cows');
+        expect(lexer.next().text).toBe('\n');
+        expect(lexer.next()).toMatchObject({ type: 'DEDENT', indentation: '' });
+        expect(lexer.next().text).toBe('\t\t');
+        expect(lexer.next().text).toBe('\n');
+        expect(lexer.next().text).toBe('\t');
+        expect(lexer.next().text).toBe('\n');
+        expect(lexer.next().text).toBe('\n');
+        expect(lexer.next().text).toBe('cows');
+        expect(lexer.next().text).toBe('\n');
         expect(lexer.next()).toBe(undefined);
     });
 })
