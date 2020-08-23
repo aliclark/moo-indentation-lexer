@@ -14,7 +14,7 @@ const lexer = new IndentationLexer({ lexer: mooLexer })
 lexer.reset('...')
 
 // In addition to the normal Moo tokens,
-// extra INDENT/DEDENT tokens will be emitted for matching indentation/unindentation
+// extra indent/dedent tokens will be emitted for matching indentation/unindentation
 lexer.next()
 ```
 ### Custom
@@ -32,7 +32,7 @@ const lexer = new IndentationLexer({
     indentationType: 'WS',
     newlineType: 'NL',
     commentType: 'comment',
-    indentName: 'INDENT',
-    dedentName: 'DEDENT'
+    indentName: 'indent',
+    dedentName: 'dedent'
 })
 ```
