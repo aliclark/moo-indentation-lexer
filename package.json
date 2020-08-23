@@ -1,12 +1,13 @@
 {
   "name": "moo-indentation-lexer",
-  "version": "3.3.1",
+  "version": "3.3.2",
   "main": "index.js",
   "repository": "github:aliclark/moo-indentation-lexer",
   "author": "Ali Clark",
   "license": "MIT",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "prepublish": "yarn test"
   },
   "dependencies": {
     "moo-peekable-lexer": "^1.1.2"
