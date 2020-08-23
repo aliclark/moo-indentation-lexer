@@ -17,7 +17,7 @@ describe('IndentationLexer', () => {
             NL:      { match: /\n/, lineBreaks: true },
         })
 
-        lexer = new IndentationLexer({ lexer: mooLexer })
+        lexer = new IndentationLexer({ lexer: mooLexer, commentType: 'comment' })
     })
 
     it('runs on Moo example input', () => {
@@ -33,7 +33,6 @@ describe('IndentationLexer', () => {
         expect(lexer.next().text).toBe('cows')
         expect(lexer.next().text).toBe('\n')
         expect(lexer.next().text).toBe('moo')
-        expect(lexer.next()).toBe(undefined)
         expect(lexer.next()).toBe(undefined)
     })
 
@@ -64,11 +63,8 @@ describe('IndentationLexer', () => {
         expect(lexer.next().text).toBe('\n')
         expect(lexer.next()).toMatchObject({ type: 'DEDENT', indentation: '\t' })
         expect(lexer.next()).toMatchObject({ type: 'DEDENT', indentation: '' })
-        expect(lexer.next()).toMatchObject({ type: 'INDENT', indentation: '  ' })
         expect(lexer.next().text).toBe('  ')
         expect(lexer.next().text).toBe('moo')
-        expect(lexer.next()).toMatchObject({ type: 'DEDENT', col: 6, line: 8, offset: 47, indentation: '' })
-        expect(lexer.next()).toBe(undefined)
         expect(lexer.next()).toBe(undefined)
     })
 

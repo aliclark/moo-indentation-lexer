@@ -168,7 +168,7 @@ class IndentationLexer {
             }
 
             this._indentations.pop()
-            const startToken = this._queuedLines[0][0]
+            const startToken = this._queuedLines[0].length !== 0 ? this._queuedLines[0][0] : nextToken
             return {
                 type: this._dedentName,
                 value: '',
