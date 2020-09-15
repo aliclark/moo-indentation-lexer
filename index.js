@@ -204,7 +204,7 @@ class IndentationLexer {
 
             const token = this._getToken()
 
-            if (this._isNewline(nextToken)) {
+            if (this._isNewline(token)) {
                 this._state = 'lineStart'
             }
             return token
