@@ -1,4 +1,12 @@
 
+function invert(object) {
+    const result = {}
+    for (const key in object){
+        result[object[key]] = key
+    }
+    return result
+}
+
 class LexerIterator {
     constructor(lexer) {
         this._lexer = lexer
@@ -18,8 +26,8 @@ const nonTab = /[^\t]/;
 
 class IndentationLexer {
     constructor({
-                    lexer, indentationType, newlineType, commentType, indentName, dedentName,
-                    state, indentations, queuedTokens, queuedLines, lastToken
+                    lexer, indentationType, newlineType, commentType, indentName, dedentName, enclosingPunctuations,
+                    state, enclosures, indentations, queuedTokens, queuedLines, lastToken
     }) {
         this._lexer = lexer.peek ? lexer : this._makePeekableLexer(lexer)
         this._indentationType = indentationType || null
@@ -27,11 +35,17 @@ class IndentationLexer {
         this._commentType = commentType || null
         this._indentName = indentName || 'indent'
         this._dedentName = dedentName || 'dedent'
+        this._enclosingPunctuations = enclosingPunctuations || { '{': '}', '(': ')', '[': ']' }
         this._state = state || 'lineStart'
+        this._enclosures = enclosures || []
         this._indentations = indentations || ['']
         this._queuedTokens = queuedTokens || []
         this._queuedLines = queuedLines || []
         this._lastToken = lastToken || null
+
+        this._startingPunctuations = Object.keys(this._enclosingPunctuations)
+        this._closingPunctuations  = Object.values(this._enclosingPunctuations)
+        this._matching = invert(this._enclosingPunctuations)
     }
 
     _makePeekableLexer(lexer) {
@@ -41,6 +55,7 @@ class IndentationLexer {
 
     reset(data, info) {
         this._state = info ? info.state : 'lineStart'
+        this._enclosures = info ? [...info.enclosures] : []
         this._indentations = info ? [...info.indentations] : ['']
         this._queuedTokens = info ? [...info.queuedTokens] : []
         this._queuedLines = info ? [...info.queuedLines] : []
@@ -51,6 +66,7 @@ class IndentationLexer {
     save() {
         return {
             state: this._state,
+            enclosures: [...this._enclosures],
             indentations: [...this._indentations],
             queuedTokens: [...this._queuedTokens],
             queuedLines: [...this._queuedLines],
@@ -202,11 +218,43 @@ class IndentationLexer {
                 return this.next()
             }
 
+            if (nextToken && this._closingPunctuations.includes(nextToken.text)) {
+
+                const indentation = this._indentations[this._indentations.length - 1]
+                const match = this._matching[nextToken.text]
+
+                const startPunctuation = this._enclosures.find(({ opening }) => opening === match)
+                const { indentationLevel } = startPunctuation || { indentationLevel: '' }
+
+                if (indentation !== indentationLevel && indentation.startsWith(indentationLevel)) {
+                    this._indentations.pop()
+                    return {
+                        type: this._dedentName,
+                        value: '',
+                        text: '',
+                        toString: nextToken.toString,
+                        offset: nextToken.offset,
+                        lineBreaks: 0,
+                        line: nextToken.line,
+                        col: nextToken.col,
+                        indentation: indentationLevel
+                    }
+                }
+            }
+
             const token = this._getToken()
 
             if (this._isNewline(token)) {
                 this._state = 'lineStart'
             }
+
+            if (token && this._startingPunctuations.includes(token.text)) {
+                this._enclosures.unshift({
+                    opening: token.text,
+                    indentationLevel: this._indentations[this._indentations.length - 1]
+                })
+            }
+
             return token
         }
     }
@@ -226,14 +274,16 @@ class IndentationLexer {
         const commentType = this._commentType
         const indentName = this._indentName
         const dedentName = this._dedentName
+        const enclosingPunctuations = { ...this._enclosingPunctuations }
         const state = this._state
+        const enclosures = [...this._enclosures]
         const indentations = [...this._indentations]
         const queuedTokens = [...this._queuedTokens]
         const queuedLines = [...this._queuedLines]
         const lastToken = this._lastToken
         return new IndentationLexer({
-            lexer, indentationType, newlineType, commentType, indentName, dedentName,
-            state, indentations, queuedTokens, queuedLines, lastToken
+            lexer, indentationType, newlineType, commentType, indentName, dedentName, enclosingPunctuations,
+            state, enclosures, indentations, queuedTokens, queuedLines, lastToken
         })
     }
 

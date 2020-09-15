@@ -13,6 +13,8 @@ describe('IndentationLexer', () => {
             string:  /"(?:\\["\\]|[^\n"\\])*"/,
             lparen:  '(',
             rparen:  ')',
+            lbrace: '{',
+            rbrace: '}',
             keyword: ['while', 'if', 'else', 'moo', 'cows', 'go'],
             NL:      { match: /\n/, lineBreaks: true },
         })
@@ -70,19 +72,25 @@ describe('IndentationLexer', () => {
 
     it('can end on an indent', () => {
 
-        lexer.reset('cows\n\tcows\n\t\tcows\n\t')
+        lexer.reset('cows\n\t{((cows\n\t\tcows))}\n\t')
 
         expect(lexer.next().text).toBe('cows')
         expect(lexer.next().text).toBe('\n')
         expect(lexer.next()).toMatchObject({ type: 'indent', indentation: '\t' })
         expect(lexer.next().text).toBe('\t')
+        expect(lexer.next().text).toBe('{')
+        expect(lexer.next().text).toBe('(')
+        expect(lexer.next().text).toBe('(')
         expect(lexer.next().text).toBe('cows')
         expect(lexer.next().text).toBe('\n')
         expect(lexer.next()).toMatchObject({ type: 'indent', indentation: '\t\t' })
         expect(lexer.next().text).toBe('\t\t')
         expect(lexer.next().text).toBe('cows')
-        expect(lexer.next().text).toBe('\n')
         expect(lexer.next()).toMatchObject({ type: 'dedent', indentation: '\t' })
+        expect(lexer.next().text).toBe(')')
+        expect(lexer.next().text).toBe(')')
+        expect(lexer.next().text).toBe('}')
+        expect(lexer.next().text).toBe('\n')
         expect(lexer.next()).toMatchObject({ type: 'dedent', indentation: '' })
         expect(lexer.next().text).toBe('\t')
         expect(lexer.next()).toBe(undefined)
