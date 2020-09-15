@@ -15,6 +15,7 @@ lexer.reset('...')
 
 // In addition to the normal Moo tokens,
 // extra indent/dedent tokens will be emitted for matching indentation/unindentation
+// Indentation levels are also closed off by matching enclosures of {}, () and []
 lexer.next()
 ```
 ### Custom
@@ -33,6 +34,7 @@ const lexer = new IndentationLexer({
     newlineType: 'NL',
     commentType: 'comment',
     indentName: 'indent',
-    dedentName: 'dedent'
+    dedentName: 'dedent',
+    enclosingPunctuations: { '[': ']', '<': '>' }   // defaults {}, () and []
 })
 ```
