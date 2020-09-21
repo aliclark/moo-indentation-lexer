@@ -145,7 +145,7 @@ class IndentationLexer {
 
         if (this._state === 'lineContent') {
             const indentationLevel = this._indentations[this._indentations.length - 1]
-            const indentation = (this._queuedLines[this._queuedLines.length - 1] || []).map(({ value }) => value).join('')
+            const indentation = (this._queuedLines[this._queuedLines.length - 1] || []).map(({ text }) => text).join('')
 
             if (!nextToken && this._indentations.length > 1) {
                 this._indentations.pop()
