@@ -27,7 +27,7 @@ const nonTab = /[^\t]/;
 class IndentationLexer {
     constructor({
                     lexer, indentationType, newlineType, commentType, indentName, dedentName, enclosingPunctuations,
-                    state, enclosures, indentations, queuedTokens, queuedLines, lastToken
+                    separators, state, enclosures, indentations, queuedTokens, queuedLines, lastToken
     }) {
         this._lexer = lexer.peek ? lexer : this._makePeekableLexer(lexer)
         this._indentationType = indentationType || null
@@ -36,6 +36,7 @@ class IndentationLexer {
         this._indentName = indentName || 'indent'
         this._dedentName = dedentName || 'dedent'
         this._enclosingPunctuations = enclosingPunctuations || { '{': '}', '(': ')', '[': ']' }
+        this._separators = separators || [',', ':', ';']
         this._state = state || 'lineStart'
         this._enclosures = enclosures || []
         this._indentations = indentations || ['']
@@ -133,9 +134,10 @@ class IndentationLexer {
         }
 
         if (this._state === 'lineEnding') {
-            this._queuedTokens.push(this._getToken())
+            const token = this._getToken()
+            this._queuedTokens.push(token)
 
-            if (this._isNewline(nextToken)) {
+            if (this._isNewline(token)) {
                 this._state = 'lineStart'
                 this._queuedLines.push(this._queuedTokens)
                 this._queuedTokens = []
@@ -168,6 +170,12 @@ class IndentationLexer {
             }
 
             if (indentation.startsWith(indentationLevel)) {
+
+                if (this._separators.includes(this._queuedLines[0][0].text)) {
+                    this._state = 'separatorFlush'
+                    return this.next()
+                }
+
                 this._indentations.push(indentation)
                 const startToken = this._queuedLines[0][0]
                 return {
@@ -196,6 +204,16 @@ class IndentationLexer {
                 col: startToken.col,
                 indentation: this._indentations[this._indentations.length - 1]
             }
+        }
+
+        if (this._state === 'separatorFlush') {
+
+            if (this._queuedLines[0].length === 0) {
+                this._state = 'lineContent'
+                this._queuedLines.shift()
+                return this.next()
+            }
+            return this._queuedLines[0].shift()
         }
 
         if (this._state === 'bufferFlush') {
@@ -255,6 +273,18 @@ class IndentationLexer {
                 })
             }
 
+            if (token && this._separators.includes(token.text) && this._isNewline(this._lexer.peek())) {
+
+                this._queuedTokens.push(token)
+                this._queuedTokens.push(this._getToken())
+
+                this._state = 'lineStart'
+                this._queuedLines.push(this._queuedTokens)
+                this._queuedTokens = []
+
+                return this.next()
+            }
+
             return token
         }
     }
@@ -275,6 +305,7 @@ class IndentationLexer {
         const indentName = this._indentName
         const dedentName = this._dedentName
         const enclosingPunctuations = { ...this._enclosingPunctuations }
+        const separators = [...this._separators]
         const state = this._state
         const enclosures = [...this._enclosures]
         const indentations = [...this._indentations]
@@ -283,7 +314,7 @@ class IndentationLexer {
         const lastToken = this._lastToken
         return new IndentationLexer({
             lexer, indentationType, newlineType, commentType, indentName, dedentName, enclosingPunctuations,
-            state, enclosures, indentations, queuedTokens, queuedLines, lastToken
+            separators, state, enclosures, indentations, queuedTokens, queuedLines, lastToken
         })
     }
 
