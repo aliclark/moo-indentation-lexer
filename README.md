@@ -38,6 +38,6 @@ const lexer = new IndentationLexer({
     indentName: 'indent',
     dedentName: 'dedent',
     enclosingPunctuations: { '[': ']', '<': '>' },   // defaults {}, () and []
-    separators: [',']
+    separators: [',']  // defaults to , : ;
 })
 ```
