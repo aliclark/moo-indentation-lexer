@@ -1,7 +1,6 @@
 # moo-indentation-lexer
 ## Moo and Nearley compatible indentation and de-indentation lexer.
-## Usage
-### Quick
+### Usage - quick
 ```js
 const moo = require('moo')
 const IndentationLexer = require('moo-indentation-lexer')
@@ -21,7 +20,7 @@ lexer.reset('...')
 // will be emitted first, followed by the separator and newline.
 lexer.next()
 ```
-### Custom
+### Usage - custom
 ```js
 // Create a lexer from rules
 const mooLexer = moo.compile({
