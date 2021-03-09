@@ -1,5 +1,5 @@
 # moo-indentation-lexer
-## Moo and Nearley compatible indentation and de-indentation lexer.
+## Indentation and de-indentation lexer for Moo and Nearley.
 ### Usage - quick
 ```js
 const moo = require('moo')
