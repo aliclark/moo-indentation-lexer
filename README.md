@@ -1,4 +1,5 @@
 # moo-indentation-lexer
+## Moo and Nearley compatible indentation and de-indentation lexer.
 ## Usage
 ### Quick
 ```js
