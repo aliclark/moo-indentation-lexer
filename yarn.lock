@@ -2421,10 +2421,10 @@ mixin-deep@^1.2.0:
     for-in "^1.0.2"
     is-extendable "^1.0.1"
 
-moo-peekable-lexer@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/moo-peekable-lexer/-/moo-peekable-lexer-1.1.1.tgz#f6afc7ae4311e17ef3b4354f12497fcaef413ae6"
-  integrity sha512-ttw2xQyggPMcAnb/K3Z+HNZWjQTHLZodUP3eLvRgIYlWvM2sswQ+ikYTMTpUWBfwJF+2oU7G2s0oNQOxeDQHGw==
+moo-peekable-lexer@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/moo-peekable-lexer/-/moo-peekable-lexer-1.1.2.tgz#ee4ee842c55f408da59716bd5aa9cb771a33574b"
+  integrity sha512-8m53qKZqTW0RqvrxVYgfdbaH+7DMLXwLo3DRLea/6DtAcpzVZICtPboEIqcJ3dJf09JxZK9lRSGGcENgFq499Q==
 
 moo@^0.5.1:
   version "0.5.1"
@@ -3506,9 +3506,9 @@ write-file-atomic@^3.0.0:
     typedarray-to-buffer "^3.1.5"
 
 ws@^7.2.3:
-  version "7.3.1"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-7.3.1.tgz#d0547bf67f7ce4f12a72dfe31262c68d7dc551c8"
-  integrity sha512-D3RuNkynyHmEJIpD2qrgVkc9DQ23OrN/moAwZX4L8DfvszsJxpjQuUq3LMx6HoYji9fbIOBY18XWBsAux1ZZUA==
+  version "7.4.6"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-7.4.6.tgz#5654ca8ecdeee47c33a9a4bf6d28e2be2980377c"
+  integrity sha512-YmhHDO4MzaDLB+M9ym/mDA5z0naX8j7SIlT8f8z+I0VtzsRbekxEutHSme7NPS2qE8StCYQNUnfWdXta/Yu85A==
 
 xml-name-validator@^3.0.0:
   version "3.0.0"
